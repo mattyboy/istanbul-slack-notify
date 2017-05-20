@@ -2,7 +2,7 @@
 const IstanbulReport = require("../src/istanbul-report");
 const SlackNotify = require("../src/slack-notify");
 const BuildInfo = require("../src/build-info");
-const packageJson = require("../package.json");
+const fs = require("fs");
 
 if(!process.env.SLACK_WEBHOOK) {
     throw Error("SLACK_WEBHOOK must be defined as environment variable.")
@@ -28,6 +28,7 @@ const settings = {
 };
 
 // Overwrite settings from package.json if defined
+const packageJson = JSON.parse(fs.readFileSync('./package.json'));
 if(packageJson.coverage) {
     settings.istanbul.coverageFiles = packageJson.coverage.coverageFiles || settings.istanbul.coverageFiles;
     settings.istanbul.threshold = packageJson.coverage.threshold || settings.istanbul.threshold;
