@@ -23,7 +23,7 @@ const settings = {
     },
     project: {
         projectName: process.env.npm_package_name,
-        repositoryUrl: process.env.npm_package_homepage
+        repositoryUrl: process.env.npm_package_repository_url
     }
 };
 
