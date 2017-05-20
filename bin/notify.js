@@ -4,7 +4,7 @@ const SlackNotify = require("../src/slack-notify");
 const BuildInfo = require("../src/build-info");
 const fs = require("fs");
 
-if(!process.env.SLACK_WEBHOOK) {
+if (!process.env.SLACK_WEBHOOK) {
     throw Error("SLACK_WEBHOOK must be defined as environment variable.")
 }
 
@@ -23,19 +23,18 @@ const settings = {
     },
     project: {
         projectName: process.env.npm_package_name,
-        repositoryUrl: process.env.npm_package_repository_url
     }
 };
 
 // Overwrite settings from package.json if defined
 const packageJson = JSON.parse(fs.readFileSync('./package.json'));
-if(packageJson.coverage) {
+if (packageJson.coverage) {
     settings.istanbul.coverageFiles = packageJson.coverage.coverageFiles || settings.istanbul.coverageFiles;
     settings.istanbul.threshold = packageJson.coverage.threshold || settings.istanbul.threshold;
     settings.slack.channel = packageJson.coverage.channel || settings.slack.channel;
     settings.slack.username = packageJson.coverage.username || settings.slack.username;
-    settings.project.projectName = packageJson.projectName || settings.project.projectName;
-    settings.project.repositoryUrl = packageJson.repositoryUrl || settings.project.repositoryUrl;
+    settings.project.projectName = packageJson.coverage.projectName || settings.project.projectName || packageJson.name;
+    settings.project.repositoryUrl = packageJson.coverage.repositoryUrl;
 }
 
 const reports = new IstanbulReport(settings.istanbul);
