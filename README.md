@@ -1,6 +1,7 @@
 # istanbul-slack-notify
 
 [![Build Status](https://travis-ci.org/mattyboy/istanbul-slack-notify.svg?branch=master)](https://travis-ci.org/mattyboy/istanbul-slack-notify) 
+[![Coverage Status](https://coveralls.io/repos/github/mattyboy/istanbul-slack-notify/badge.svg?branch=master)](https://coveralls.io/github/mattyboy/istanbul-slack-notify?branch=master)
 
 Sends istanbul / jest coverage summary and git build details to Slack using a pass/fail threshold for project coverage.
 
