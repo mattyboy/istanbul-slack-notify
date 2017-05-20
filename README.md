@@ -28,9 +28,9 @@ You can override other default settings in your `package.json` by adding the fol
     "threshold": 100,
     "projectName": "Istanbul Slack Notify",
     "repositoryUrl": "https://github.com/mattyboy/istanbul-slack-notify",
-    "coverageFiles": ["coverage/coverage-final.json"]
+    "coverageFiles": ["coverage/coverage-final.json"],
     "username": "coverage-bot",
-    "channel": "#random",
+    "channel": "#random"
   }
 ```
 
