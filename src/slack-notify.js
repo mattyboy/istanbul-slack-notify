@@ -26,7 +26,7 @@ class SlackNotify {
                         color: threshold.color,
                         fallback: `Build ${threshold.text} at ${data.coverage.project}% of ${data.coverage.threshold}% threshold`,
                         mrkdwn_in: ['text', 'title'],
-                        title: `Build ${threshold.text} on ${data.build.branch} branch`,
+                        title: `Build ${threshold.text} for ${data.build.shortRevision}`,
                         title_link: `${data.repositoryUrl}/commits/${data.build.revision}`,
                         text: `Total coverage: \`${data.coverage.project}%\` of \`${data.coverage.threshold}%\` threshold`,
                         fields: [

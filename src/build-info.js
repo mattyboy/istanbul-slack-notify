@@ -5,9 +5,9 @@ class BuildInfo {
 
     static git() {
         return new Promise((resolve, reject) => {
-            let branch = new Promise((resolve, reject) => {
+            let shortRev = new Promise((resolve, reject) => {
                 try {
-                    git.branch(resolve);
+                    git.short(resolve);
                 } catch (e) {
                     reject(e);
                 }
@@ -20,10 +20,10 @@ class BuildInfo {
                 }
             });
 
-            Promise.all([branch, longRev])
+            Promise.all([shortRev, longRev])
                 .then(values => {
                     resolve({
-                        branch: values[0], revision: values[1]
+                        shortRevision: values[0], revision: values[1]
                     });
                 })
                 .catch(e => {

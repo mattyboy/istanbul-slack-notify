@@ -22,7 +22,7 @@ const data = {
     username: "username",
     icon_emoji: "icon_emoji",
     build: {
-        branch: "branch",
+        shortRevision: "shortRevision",
         revision: "revision"
     },
     coverage: {

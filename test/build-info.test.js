@@ -2,8 +2,8 @@ const BuildInfo = require("../src/build-info");
 const git = require("git-rev");
 
 // mock git module using jest
-git.branch = jest.fn((cb) => {
-    return cb("master");
+git.short = jest.fn((cb) => {
+    return cb("shortRevision");
 });
 
 git.long = jest.fn((cb) => {
@@ -13,18 +13,18 @@ git.long = jest.fn((cb) => {
 test('git', () => {
     const buildInfo = BuildInfo.git();
     return buildInfo.then(data => {
-        expect(data.branch).toBe("master");
+        expect(data.shortRevision).toBe("shortRevision");
         expect(data.revision).toBe("revision");
     });
 });
 
-test('git - branch error', () => {
-    git.branch.mockImplementationOnce(() => {
-        throw Error("git branch error");
+test('git - short revision error', () => {
+    git.short.mockImplementationOnce(() => {
+        throw Error("git short revision error");
     });
     const buildInfo = BuildInfo.git();
     return buildInfo.catch(e =>
-        expect(e.message).toMatch('git branch error')
+        expect(e.message).toMatch('git short revision error')
     );
 });
 
