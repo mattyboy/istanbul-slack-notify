@@ -42,6 +42,33 @@ Inside Your project root directory You can use on of following run sequence.
 
 ### Via npm task
 
+**Passing SLACK_WEBHOOK at runtime**
+
+Define a couple of npm tasks, assuming you only want slack notify from you CI server.
 ```json
-"test": "jest --coverage && ./node_modules/.bin/istanbul-slack-notify"
+"test": "APP_ENV=dev jest --coverage -- __tests__",
+"test-ci": "npm test && ./node_modules/.bin/istanbul-slack-notify",
+```
+
+Then run tests on your CI server as follows.
+
+```bash
+export SLACK_WEBHOOK=https://hooks.slack.com/xxxxx
+SLACK_WEBHOOK=$SLACK_WEBHOOK npm run test-ci
+```
+
+**Defining SLACK_WEBHOOK in package.json**
+
+While you can do this be sure it isn't in a public repo as you will expose your slack webhook url.
+
+```json
+"test": "APP_ENV=dev jest --coverage -- __tests__",
+"test-ci": "npm test && SLACK_WEBHOOK=https://hooks.slack.com/xxxxx  ./node_modules/.bin/istanbul-slack-notify",
+```
+
+### Via cli
+
+```bash
+export SLACK_WEBHOOK=https://hooks.slack.com/xxxxx
+SLACK_WEBHOOK=$SLACK_WEBHOOK ./node_modules/.bin/istanbul-slack-notify
 ```
