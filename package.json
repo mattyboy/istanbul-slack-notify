@@ -1,6 +1,6 @@
 {
   "name": "istanbul-slack-notify",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Send istanbul coverage information to slack with pass/fail threshold",
   "scripts": {
     "test": "npm run lint && npm run coverage",
