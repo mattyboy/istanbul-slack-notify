@@ -1,0 +1,48 @@
+{
+  "name": "istanbul-slack-notify",
+  "version": "1.0.0",
+  "description": "Send istanbul coverage information to slack with pass/fail threshold",
+  "scripts": {
+    "test": "eslint src/*.js test/*.js && jest"
+  },
+  "bin": {
+    "istanbul-slack-notify": "./bin/notify.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattyboy/istanbul-slack-notify.git"
+  },
+  "keywords": [
+    "slack",
+    "jest",
+    "coverage",
+    "istanbul"
+  ],
+  "author": "Matt Weston",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mattyboy/istanbul-slack-notify/issues"
+  },
+  "homepage": "https://github.com/mattyboy/istanbul-slack-notify#readme",
+  "dependencies": {
+    "es6-promise": "^4.1.0",
+    "git-rev": "^0.2.1",
+    "istanbul": "^0.4.5",
+    "slack-node": "^0.1.8"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "eslint": "^3.19.0",
+    "jest": "^20.0.3"
+  },
+  "jest": {
+    "verbose": true,
+    "collectCoverage": true
+  },
+  "coverage": {
+    "coverageFiles": [
+      "coverage/coverage-final.json"
+    ],
+    "threshold": 100
+  }
+}
