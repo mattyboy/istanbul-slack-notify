@@ -38,8 +38,6 @@ Istanbul / Jest coverage report for your project must be generated first.
 
 ## Run
 
-Inside Your project root directory You can use on of following run sequence.
-
 ### Via npm task
 
 **Passing SLACK_WEBHOOK at runtime**
