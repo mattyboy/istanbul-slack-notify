@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const IstanbulReport = require("../src/istanbul-report");
 const SlackNotify = require("../src/slack-notify");
 const BuildInfo = require("../src/build-info");
