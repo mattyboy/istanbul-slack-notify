@@ -3,10 +3,10 @@
   "version": "1.0.3",
   "description": "Send istanbul coverage information to slack with pass/fail threshold",
   "scripts": {
-    "test": "npm run lint && npm run coveralls",
+    "test": "npm run lint && npm run coverage",
     "lint": "./node_modules/.bin/eslint src/ test/",
     "coverage": "./node_modules/.bin/jest --coverage",
-    "coveralls": "./node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "bin": {
     "istanbul-slack-notify": "./bin/notify.js"
