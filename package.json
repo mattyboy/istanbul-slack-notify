@@ -1,7 +1,7 @@
 {
   "name": "istanbul-slack-notify",
-  "version": "1.0.12",
-  "description": "Send istanbul coverage information to slack with pass/fail threshold",
+  "version": "1.0.13",
+  "description": "Sends istanbul / jest coverage summary and git build details to Slack using a pass/fail threshold for project coverage.",
   "main": "./bin/notify.js",
   "scripts": {
     "test": "npm run lint && npm run coverage",
