@@ -14,7 +14,7 @@ class CommitInfo {
                 "authorEmail": "%ae",
                 "refs": "%D"
             });
-            let command = `git log -1 --no-color --pretty=format:'${format}' HEAD`;
+            let command = `git log -1 --no-color --decorate=short --pretty=format:'${format}' HEAD`;
             exec(command, (err, stdout, stderr) => {
                 if (err) {
                     err.stderr = stderr;
