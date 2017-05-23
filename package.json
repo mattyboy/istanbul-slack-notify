@@ -1,6 +1,6 @@
 {
   "name": "istanbul-slack-notify",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Sends istanbul / jest coverage summary and git build details to Slack using a pass/fail threshold for project coverage.",
   "main": "./bin/notify.js",
   "scripts": {
@@ -31,7 +31,6 @@
   "homepage": "https://github.com/mattyboy/istanbul-slack-notify#readme",
   "dependencies": {
     "es6-promise": "^4.1.0",
-    "git-rev": "^0.2.1",
     "istanbul": "^0.4.5",
     "slack-node": "^0.1.8"
   },

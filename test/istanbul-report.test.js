@@ -73,7 +73,7 @@ test('processSummary', () => {
         expect(data.functions).toBe(50);
         expect(data.lines).toBe(52.24);
         expect(data.statements).toBe(53.62);
-        expect(data.project).toBe("43.65");
+        expect(data.project).toBe(43.65);
         expect(data.threshold).toBe(settings.threshold);
         expect(data.success).toBe(true);
     });

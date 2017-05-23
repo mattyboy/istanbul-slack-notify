@@ -23,7 +23,12 @@ const data = {
     icon_emoji: "icon_emoji",
     build: {
         shortRevision: "shortRevision",
-        revision: "revision"
+        revision: "revision",
+        date: "date",
+        subject: "subject",
+        author: "author",
+        authorEmail: "authorEmail",
+        refs: ["ref", "ref1"],
     },
     coverage: {
         statements: 53.62,
@@ -76,10 +81,11 @@ test('buildCoveragePayload', () => {
     });
 });
 
-test('buildCoveragePayload - coverage failed', () => {
+test('buildCoveragePayload - coverage failed, single ref', () => {
     const slackNotify = new SlackNotify(settings);
     expect.assertions(1);
     data.coverage.success = false;
+    data.build.refs = ["ref0"];
     return slackNotify.buildCoveragePayload(data).then(data => {
         expect(data).toBeDefined();
     });

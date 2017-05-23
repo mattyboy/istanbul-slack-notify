@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const IstanbulReport = require("../src/istanbul-report");
 const SlackNotify = require("../src/slack-notify");
-const BuildInfo = require("../src/build-info");
+const CommitInfo = require("../src/commit-info");
 const fs = require("fs");
 
 if (!process.env.SLACK_WEBHOOK) {
@@ -17,9 +17,7 @@ const settings = {
         threshold: 100
     },
     slack: {
-        webhook: process.env.SLACK_WEBHOOK,
-        channel: process.env.SLACK_CHANNEL,
-        username: process.env.SLACK_USERNAME,
+        webhook: process.env.SLACK_WEBHOOK
     },
     project: {
         projectName: process.env.npm_package_name,
@@ -42,7 +40,7 @@ const slack = new SlackNotify(settings.slack);
 reports.generateSummary()
     .then(() => {
         let coverage = reports.processSummary();
-        let build = BuildInfo.git();
+        let build = CommitInfo.git();
         Promise.all([coverage, build]).then(values => {
             settings.project.coverage = values[0];
             settings.project.build = values[1];

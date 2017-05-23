@@ -61,7 +61,8 @@ class IstanbulReport {
                     lines: summary.total.lines.pct,
                     functions: summary.total.functions.pct
                 };
-                coverage.project = ((coverage.branches + coverage.statements + coverage.lines + coverage.functions) / 4).toFixed(2);
+                coverage.project = (coverage.branches + coverage.statements + coverage.lines + coverage.functions) / 4;
+                coverage.project = parseFloat(coverage.project.toFixed(2));
                 coverage.threshold = this.settings.threshold;
                 coverage.success = this.settings.threshold <= coverage.project;
                 return Promise.resolve(coverage);
