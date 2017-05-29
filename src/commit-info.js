@@ -12,7 +12,7 @@ class CommitInfo {
                 "subject": "%f",
                 "author": "%an",
                 "authorEmail": "%ae",
-                "refs": "%D"
+                "refs": "%d"
             });
             let command = `git log -1 --no-color --decorate=short --pretty=format:'${format}' HEAD`;
             exec(command, (err, stdout, stderr) => {
@@ -21,12 +21,19 @@ class CommitInfo {
                     return reject(err);
                 }
                 let commitInfo = JSON.parse(stdout);
-                commitInfo.refs = commitInfo.refs.split(", ");
+                commitInfo.refs = this.fixGitRefs(commitInfo.refs);
                 return resolve(commitInfo);
             })
         });
     }
 
+    static fixGitRefs(rawString) {
+        let refs = rawString;
+        refs = refs.trim();
+        refs = refs.replace("(", "");
+        refs = refs.replace(")", "");
+        return refs.split(", ");
+    }
 }
 
 module.exports = CommitInfo;

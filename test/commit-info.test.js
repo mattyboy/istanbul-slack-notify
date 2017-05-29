@@ -13,12 +13,12 @@ test('git', () => {
             "subject": "subject",
             "author": "author",
             "authorEmail": "authorEmail",
-            "refs": "ref0, ref1"
+            "refs": " (HEAD, origin/master, origin/HEAD, master)"
         });
         cb(null, stdout, '');
     });
 
-    expect.assertions(9);
+    expect.assertions(10);
     return CommitInfo.git().then(data => {
         expect(data.shortRevision).toBe("shortRevision");
         expect(data.revision).toBe("revision");
@@ -26,8 +26,9 @@ test('git', () => {
         expect(data.subject).toBe("subject");
         expect(data.author).toBe("author");
         expect(data.authorEmail).toBe("authorEmail");
-        expect(data.refs.length).toBe(2);
-        expect(data.refs[0]).toBe("ref0");
+        expect(data.refs.length).toBe(4);
+        expect(data.refs[0]).toBe("HEAD");
+        expect(data.refs[1]).toBe("origin/master");
     });
 });
 
