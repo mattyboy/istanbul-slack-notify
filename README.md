@@ -7,6 +7,10 @@ Sends istanbul / jest coverage summary and git build details to Slack using a pa
 
 ![screenshot](https://raw.githubusercontent.com/mattyboy/istanbul-slack-notify/master/screenshot.png "Message example")
 
+If SLACK_WEBHOOK is not provided it prints total coverage info to console instead
+
+![screenshot console](https://raw.githubusercontent.com/mattyboy/istanbul-slack-notify/master/screenshot-console.png "Console example")
+
 ## Table of Contents
 
   1. [Installation](#installation)
@@ -68,12 +72,14 @@ export SLACK_WEBHOOK=https://hooks.slack.com/xxxxx
 SLACK_WEBHOOK=$SLACK_WEBHOOK npm run test-ci
 ```
 
+Note: If you don't set the SLACK_WEBHOOK it will print totals coverage to console instead
+
 **Defining SLACK_WEBHOOK in package.json**
 
 While you can do this be sure it isn't in a public repo as you will expose your slack webhook url.
 
 ```json
-"test": "./node_modules/.bin/jest --coverage",
+"test": "./node_modules/.bin/jest --coverage && ./node_modules/.bin/istanbul-slack-notify",
 "test-ci": "npm test && SLACK_WEBHOOK=https://hooks.slack.com/xxxxx ./node_modules/.bin/istanbul-slack-notify",
 ```
 
