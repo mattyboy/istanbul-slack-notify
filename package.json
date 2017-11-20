@@ -1,10 +1,10 @@
 {
   "name": "istanbul-slack-notify",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Sends istanbul / jest coverage summary and git build details to Slack using a pass/fail threshold for project coverage.",
   "main": "./bin/notify.js",
   "scripts": {
-    "test": "npm run lint && npm run coverage",
+    "test": "npm run lint && npm run coverage && ./bin/notify.js",
     "notify": "npm run test && ./bin/notify.js",
     "lint": "./node_modules/.bin/eslint src/ test/",
     "coverage": "./node_modules/.bin/jest --coverage",
@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/mattyboy/istanbul-slack-notify#readme",
   "dependencies": {
+    "colors": "^1.1.2",
     "es6-promise": "^4.1.0",
     "istanbul": "^0.4.5",
     "slack-node": "^0.1.8"
@@ -42,7 +43,15 @@
   },
   "jest": {
     "verbose": true,
-    "collectCoverage": true
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**"
+    ],
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text-summary"
+    ]
   },
   "coverage": {
     "coverageFiles": [

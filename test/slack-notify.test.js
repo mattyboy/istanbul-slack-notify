@@ -1,4 +1,5 @@
 const SlackNotify = require("../src/slack-notify");
+const {project} = require("./constants");
 
 // Use jest to mock request object
 const mockOptions = {execute: false, error: null};
@@ -14,31 +15,6 @@ jest.mock('request', () => {
 const settings = {
     webhook: "http://slack.webhook.com/random/path",
     timeout: 50
-};
-
-const data = {
-    projectName: "projectName",
-    channel: "channel",
-    username: "username",
-    icon_emoji: "icon_emoji",
-    build: {
-        shortRevision: "shortRevision",
-        revision: "revision",
-        date: "date",
-        subject: "subject",
-        author: "author",
-        authorEmail: "authorEmail",
-        refs: ["ref", "ref1"],
-    },
-    coverage: {
-        statements: 53.62,
-        branches: 18.75,
-        lines: 52.24,
-        functions: 50,
-        project: '43.65',
-        threshold: 25,
-        success: true
-    }
 };
 
 test('constructor missing webhook url', () => {
@@ -76,7 +52,7 @@ test('buildCoveragePayload - data is empty', () => {
 test('buildCoveragePayload', () => {
     const slackNotify = new SlackNotify(settings);
     expect.assertions(1);
-    return slackNotify.buildCoveragePayload(data).then(data => {
+    return slackNotify.buildCoveragePayload(project).then(data => {
         expect(data).toBeDefined();
     });
 });
@@ -84,9 +60,9 @@ test('buildCoveragePayload', () => {
 test('buildCoveragePayload - coverage failed, single ref', () => {
     const slackNotify = new SlackNotify(settings);
     expect.assertions(1);
-    data.coverage.success = false;
-    data.build.refs = ["ref0"];
-    return slackNotify.buildCoveragePayload(data).then(data => {
+    project.coverage.success = false;
+    project.build.refs = ["ref0"];
+    return slackNotify.buildCoveragePayload(project).then(data => {
         expect(data).toBeDefined();
     });
 });
@@ -121,3 +97,4 @@ test('sendNotification', () => {
     mockOptions.error = "this is the best error in the world";
     return expect(slackNotify.sendNotification({})).rejects.toBe(mockOptions.error);
 });
+

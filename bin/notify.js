@@ -1,15 +1,13 @@
 #!/usr/bin/env node
 const IstanbulReport = require("../src/istanbul-report");
 const SlackNotify = require("../src/slack-notify");
+const TextNotify = require("../src/text-notify");
 const CommitInfo = require("../src/commit-info");
 const fs = require("fs");
 
-if (!process.env.SLACK_WEBHOOK) {
-    throw Error("SLACK_WEBHOOK must be defined as environment variable.")
-}
-
 // Runs Coverage Notifier
 const settings = {
+    useTextNotify: !process.env.SLACK_WEBHOOK,
     istanbul: {
         rootDir: process.env.PWD,
         coverageFiles: ["coverage/coverage-final.json"],
@@ -36,7 +34,6 @@ if (packageJson.coverage) {
 }
 
 const reports = new IstanbulReport(settings.istanbul);
-const slack = new SlackNotify(settings.slack);
 reports.generateSummary()
     .then(() => {
         let coverage = reports.processSummary();
@@ -44,7 +41,14 @@ reports.generateSummary()
         Promise.all([coverage, build]).then(values => {
             settings.project.coverage = values[0];
             settings.project.build = values[1];
-            slack.buildCoveragePayload(settings.project)
-                .then((data) => slack.sendNotification(data));
+
+            if(settings.useTextNotify) {
+                const textNotify = new TextNotify();
+                textNotify.printCoverage(settings.project);
+            } else {
+                const slack = new SlackNotify(settings.slack);
+                slack.buildCoveragePayload(settings.project)
+                    .then((data) => slack.sendNotification(data));
+            }
         })
     });
