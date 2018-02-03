@@ -42,7 +42,6 @@ class CommitInfo {
             format = format.replace(/"/g, "\"\"\"");
             return `git log -1 --no-color --decorate=short --pretty=format:${format} HEAD`;
         }
-        
         return `git log -1 --no-color --decorate=short --pretty=format:'${format}' HEAD`;
     }
 }
