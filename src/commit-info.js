@@ -38,13 +38,13 @@ class CommitInfo {
             "refs": "%d"
         });
 
-		if (platform === 'win32') {
-            format = format.replace(/\"/g, "\"\"\"");
-			return `git log -1 --no-color --decorate=short --pretty=format:${format} HEAD`;
-		} else {
-			return `git log -1 --no-color --decorate=short --pretty=format:'${format}' HEAD`;
-		}
-	}
+        if (platform === 'win32') {
+            format = format.replace(/"/g, "\"\"\"");
+            return `git log -1 --no-color --decorate=short --pretty=format:${format} HEAD`;
+        }
+        
+        return `git log -1 --no-color --decorate=short --pretty=format:'${format}' HEAD`;
+    }
 }
 
 module.exports = CommitInfo;
