@@ -5,16 +5,7 @@ class CommitInfo {
 
     static git() {
         return new Promise((resolve, reject) => {
-            let format = JSON.stringify({
-                "shortRevision": "%h",
-                "revision": "%H",
-                "date": "%cr",
-                "subject": "%f",
-                "author": "%an",
-                "authorEmail": "%ae",
-                "refs": "%d"
-            });
-            let command = `git log -1 --no-color --decorate=short --pretty=format:'${format}' HEAD`;
+            let command = this.getCommand();
             exec(command, (err, stdout, stderr) => {
                 if (err) {
                     err.stderr = stderr;
@@ -33,6 +24,25 @@ class CommitInfo {
         refs = refs.replace("(", "");
         refs = refs.replace(")", "");
         return refs.split(", ");
+    }
+
+    static getCommand() {
+        let platform = process.platform;
+        let format = JSON.stringify({
+            "shortRevision": "%h",
+            "revision": "%H",
+            "date": "%cr",
+            "subject": "%f",
+            "author": "%an",
+            "authorEmail": "%ae",
+            "refs": "%d"
+        });
+
+        if (platform === 'win32') {
+            format = format.replace(/"/g, "\"\"\"");
+            return `git log -1 --no-color --decorate=short --pretty=format:${format} HEAD`;
+        }
+        return `git log -1 --no-color --decorate=short --pretty=format:'${format}' HEAD`;
     }
 }
 
