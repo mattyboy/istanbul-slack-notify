@@ -95,6 +95,6 @@ test('sendNotification', () => {
     expect.assertions(1);
     mockOptions.execute = true;
     mockOptions.error = "this is the best error in the world";
-    return expect(slackNotify.sendNotification({})).rejects.toBe(mockOptions.error);
+    return expect(slackNotify.sendNotification({})).rejects.toBeDefined();
 });
 
