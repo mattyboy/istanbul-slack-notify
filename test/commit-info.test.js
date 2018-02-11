@@ -3,19 +3,12 @@ const {exec} = require('child_process');
 
 jest.mock('child_process');
 
+const TEST_STDOUT = ["shortRevision", "revision", "date", "subject", "author", "authorEmail", " (HEAD, origin/master, origin/HEAD, master)"];
+
 test('git', () => {
     exec.mockImplementationOnce((cmd, cb) => {
         expect(cmd).toEqual(expect.stringMatching(/^git log.*HEAD$/));
-        const stdout = JSON.stringify({
-            "shortRevision": "shortRevision",
-            "revision": "revision",
-            "date": "date",
-            "subject": "subject",
-            "author": "author",
-            "authorEmail": "authorEmail",
-            "refs": " (HEAD, origin/master, origin/HEAD, master)"
-        });
-        cb(null, stdout, '');
+        cb(null, TEST_STDOUT.join("$$$"), '');
     });
 
     expect.assertions(10);
