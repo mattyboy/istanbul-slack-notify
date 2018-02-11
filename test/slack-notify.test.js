@@ -78,13 +78,13 @@ test('sendNotification - request too long timeout', () => {
     );
 });
 
-test('sendNotification', () => {
+test('sendNotification - request resolved with no errors', () => {
     const slackNotify = new SlackNotify(settings);
     expect.assertions(1);
     return expect(slackNotify.sendNotification({})).resolves.toBeUndefined();
 });
 
-test('sendNotification', () => {
+test('sendNotification - request resolves with errors', () => {
     const errorSettings = {
         webhook: "http://slack.webhook.com/error"
     };
