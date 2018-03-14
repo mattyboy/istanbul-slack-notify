@@ -1,16 +1,7 @@
 const SlackNotify = require("../src/slack-notify");
 const {project} = require("./constants");
 
-// Use jest to mock request object
-const mockOptions = {execute: false, error: null};
-jest.mock('request', () => {
-    return (params, callback) => {
-        if (mockOptions.execute) {
-            //callback(err, body, response)
-            callback(mockOptions.error, {}, "ok");
-        }
-    };
-});
+jest.mock('slack-node');
 
 const settings = {
     webhook: "http://slack.webhook.com/random/path",
@@ -76,25 +67,29 @@ test('sendNotification - payload is missing', () => {
 });
 
 test('sendNotification - request too long timeout', () => {
-    const slackNotify = new SlackNotify(settings);
+    const timoutSettings = {
+        webhook: "http://slack.webhook.com/timeout",
+        timeout: 10
+    };
+    const slackNotify = new SlackNotify(timoutSettings);
     expect.assertions(1);
     return slackNotify.sendNotification({}).catch(e =>
         expect(e.message).toMatch('Took too long to send slack request')
     );
 });
 
-test('sendNotification', () => {
+test('sendNotification - request resolved with no errors', () => {
     const slackNotify = new SlackNotify(settings);
     expect.assertions(1);
-    mockOptions.execute = true;
     return expect(slackNotify.sendNotification({})).resolves.toBeUndefined();
 });
 
-test('sendNotification', () => {
-    const slackNotify = new SlackNotify(settings);
+test('sendNotification - request resolves with errors', () => {
+    const errorSettings = {
+        webhook: "http://slack.webhook.com/error"
+    };
+    const slackNotify = new SlackNotify(errorSettings);
     expect.assertions(1);
-    mockOptions.execute = true;
-    mockOptions.error = "this is the best error in the world";
-    return expect(slackNotify.sendNotification({})).rejects.toBe(mockOptions.error);
+    return expect(slackNotify.sendNotification({})).rejects.toBe("fake error was thrown");
 });
 

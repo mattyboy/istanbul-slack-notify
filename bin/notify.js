@@ -42,7 +42,7 @@ reports.generateSummary()
             settings.project.coverage = values[0];
             settings.project.build = values[1];
 
-            if(settings.useTextNotify) {
+            if (settings.useTextNotify) {
                 const textNotify = new TextNotify();
                 textNotify.printCoverage(settings.project);
             } else {
