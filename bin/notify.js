@@ -19,7 +19,8 @@ const settings = {
     },
     project: {
         projectName: process.env.npm_package_name,
-    }
+    },
+    haltOnFailure: false
 };
 
 // Overwrite settings from package.json if defined
@@ -31,6 +32,7 @@ if (packageJson.coverage) {
     settings.slack.username = packageJson.coverage.username || settings.slack.username;
     settings.project.projectName = packageJson.coverage.projectName || settings.project.projectName || packageJson.name;
     settings.project.repositoryUrl = packageJson.coverage.repositoryUrl;
+    settings.haltOnFailure = packageJson.coverage.hasOwnProperty("haltOnFailure") ? packageJson.coverage.haltOnFailure : settings.haltOnFailure;
 }
 
 const reports = new IstanbulReport(settings.istanbul);
@@ -50,5 +52,6 @@ reports.generateSummary()
                 slack.buildCoveragePayload(settings.project)
                     .then((data) => slack.sendNotification(data));
             }
+            return !coverage.success && settings.haltOnFailure ? 1 : 0;
         })
     });
