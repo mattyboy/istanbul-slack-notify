@@ -32,26 +32,41 @@ if (packageJson.coverage) {
     settings.slack.username = packageJson.coverage.username || settings.slack.username;
     settings.project.projectName = packageJson.coverage.projectName || settings.project.projectName || packageJson.name;
     settings.project.repositoryUrl = packageJson.coverage.repositoryUrl;
-    settings.haltOnFailure = packageJson.coverage.hasOwnProperty("haltOnFailure") ? packageJson.coverage.haltOnFailure : settings.haltOnFailure;
+    settings.haltOnFailure = Object.prototype.hasOwnProperty.call(packageJson.coverage, "haltOnFailure") ? packageJson.coverage.haltOnFailure : settings.haltOnFailure;
 }
 
-const reports = new IstanbulReport(settings.istanbul);
-reports.generateSummary()
-    .then(() => {
-        let coverage = reports.processSummary();
-        let build = CommitInfo.git();
-        Promise.all([coverage, build]).then(values => {
-            settings.project.coverage = values[0];
-            settings.project.build = values[1];
+const handleResults = (reports) => {
+    let coverage = reports.processSummary();
+    let build = CommitInfo.git();
+    return new Promise((resolve, reject) => {
+        return Promise.all([coverage, build])
+            .then(values => {
+                settings.project.coverage = values[0];
+                settings.project.build = values[1];
 
-            if (settings.useTextNotify) {
-                const textNotify = new TextNotify();
-                textNotify.printCoverage(settings.project);
-            } else {
-                const slack = new SlackNotify(settings.slack);
-                slack.buildCoveragePayload(settings.project)
-                    .then((data) => slack.sendNotification(data));
-            }
-            return !coverage.success && settings.haltOnFailure ? 1 : 0;
-        })
+                if (settings.useTextNotify) {
+                    const textNotify = new TextNotify();
+                    textNotify.printCoverage(settings.project);
+                } else {
+                    const slack = new SlackNotify(settings.slack);
+                    slack.buildCoveragePayload(settings.project)
+                        .then((data) => slack.sendNotification(data));
+                }
+                if (!settings.project.coverage.success && settings.haltOnFailure) {
+                    reject(new Error("Coverage Check Failed & Halt On Failure Set. Exiting."));
+                }
+                resolve(0);
+            })
+    });
+};
+
+const reports = new IstanbulReport(settings.istanbul);
+
+reports.generateSummary()
+    .then(handleResults(reports))
+    .then(result => {
+        return result;
+    })
+    .catch(() => {
+        return 1;
     });
