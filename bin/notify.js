@@ -18,13 +18,13 @@ const settings = {
         webhook: process.env.SLACK_WEBHOOK
     },
     project: {
-        projectName: process.env.npm_package_name,
+        projectName: process.env.npm_package_name
     },
     haltOnFailure: false
 };
 
 // Overwrite settings from package.json if defined
-const packageJson = JSON.parse(fs.readFileSync('./package.json'));
+const packageJson = JSON.parse(fs.readFileSync("./package.json"));
 if (packageJson.coverage) {
     settings.istanbul.coverageFiles = packageJson.coverage.coverageFiles || settings.istanbul.coverageFiles;
     settings.istanbul.threshold = packageJson.coverage.threshold || settings.istanbul.threshold;
@@ -32,10 +32,23 @@ if (packageJson.coverage) {
     settings.slack.username = packageJson.coverage.username || settings.slack.username;
     settings.project.projectName = packageJson.coverage.projectName || settings.project.projectName || packageJson.name;
     settings.project.repositoryUrl = packageJson.coverage.repositoryUrl;
-    settings.haltOnFailure = Object.prototype.hasOwnProperty.call(packageJson.coverage, "haltOnFailure") ? packageJson.coverage.haltOnFailure : settings.haltOnFailure;
+    settings.haltOnFailure = Object.prototype.hasOwnProperty.call(packageJson.coverage, "haltOnFailure")
+        ? packageJson.coverage.haltOnFailure
+        : settings.haltOnFailure;
 }
 
-const handleResults = (reports) => {
+const reports = new IstanbulReport(settings.istanbul);
+
+
+const respondAppropriately = (resolve, reject) => {
+    if (!settings.project.coverage.success && settings.haltOnFailure) {
+        reject(new Error("Coverage Check Failed & Halt On Failure Set. Exiting."));
+    } else {
+        resolve(0);
+    }
+};
+
+const handleResults = () => {
     let coverage = reports.processSummary();
     let build = CommitInfo.git();
     return new Promise((resolve, reject) => {
@@ -47,26 +60,25 @@ const handleResults = (reports) => {
                 if (settings.useTextNotify) {
                     const textNotify = new TextNotify();
                     textNotify.printCoverage(settings.project);
+                    respondAppropriately(resolve, reject);
                 } else {
                     const slack = new SlackNotify(settings.slack);
                     slack.buildCoveragePayload(settings.project)
-                        .then((data) => slack.sendNotification(data));
+                        .then(data => {
+                            slack.sendNotification(data);
+                            respondAppropriately(resolve, reject);
+                        });
                 }
-                if (!settings.project.coverage.success && settings.haltOnFailure) {
-                    reject(new Error("Coverage Check Failed & Halt On Failure Set. Exiting."));
-                }
-                resolve(0);
-            })
+            });
     });
 };
 
-const reports = new IstanbulReport(settings.istanbul);
-
-reports.generateSummary()
-    .then(handleResults(reports))
+reports
+    .generateSummary()
+    .then(handleResults)
     .then(result => {
         return result;
     })
     .catch(() => {
-        return 1;
+        process.exit(1)
     });
