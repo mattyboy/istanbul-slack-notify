@@ -52,13 +52,13 @@ const handleResults = () => {
                 if (settings.useTextNotify) {
                     const textNotify = new TextNotify();
                     textNotify.printCoverage(settings.project);
-                    resolve();
+                    resolve(settings);
                 } else {
                     const slack = new SlackNotify(settings.slack);
                     slack.buildCoveragePayload(settings.project)
                         .then(data => {
                             slack.sendNotification(data);
-                            resolve();
+                            resolve(settings);
                         });
                 }
             })
@@ -69,7 +69,7 @@ const handleResults = () => {
 reports
     .generateSummary()
     .then(handleResults)
-    .then(ProcessResponder.respond)
+    .then(settings => ProcessResponder.respond(settings))
     .catch(() => {
         //eslint-disable-next-line no-process-exit
         process.exit(1)
