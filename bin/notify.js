@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const ProcessResponder = require("../src/process-responder");
 const IstanbulReport = require("../src/istanbul-report");
 const SlackNotify = require("../src/slack-notify");
 const TextNotify = require("../src/text-notify");
@@ -39,15 +40,6 @@ if (packageJson.coverage) {
 
 const reports = new IstanbulReport(settings.istanbul);
 
-
-const respondAppropriately = (resolve, reject) => {
-    if (!settings.project.coverage.success && settings.haltOnFailure) {
-        reject(new Error("Coverage Check Failed & Halt On Failure Set. Exiting."));
-    } else {
-        resolve(0);
-    }
-};
-
 const handleResults = () => {
     let coverage = reports.processSummary();
     let build = CommitInfo.git();
@@ -60,25 +52,25 @@ const handleResults = () => {
                 if (settings.useTextNotify) {
                     const textNotify = new TextNotify();
                     textNotify.printCoverage(settings.project);
-                    respondAppropriately(resolve, reject);
+                    resolve();
                 } else {
                     const slack = new SlackNotify(settings.slack);
                     slack.buildCoveragePayload(settings.project)
                         .then(data => {
                             slack.sendNotification(data);
-                            respondAppropriately(resolve, reject);
+                            resolve();
                         });
                 }
-            });
+            })
+            .catch(error => reject(error));
     });
 };
 
 reports
     .generateSummary()
     .then(handleResults)
-    .then(result => {
-        return result;
-    })
+    .then(ProcessResponder.respond)
     .catch(() => {
+        //eslint-disable-next-line no-process-exit
         process.exit(1)
     });
