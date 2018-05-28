@@ -45,7 +45,8 @@ You can override other default settings in your `package.json` by adding the fol
     "repositoryUrl": "https://github.com/mattyboy/istanbul-slack-notify",
     "coverageFiles": ["coverage/coverage-final.json"],
     "username": "coverage-bot",
-    "channel": "#random"
+    "channel": "#random",
+    "haltOnFailure": true
   }
 ```
 
