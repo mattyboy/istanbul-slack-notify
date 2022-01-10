@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/mattyboy/istanbul-slack-notify#readme",
   "dependencies": {
-    "colors": "^1.1.2",
+    "colors": "1.4.0",
     "es6-promise": "^4.1.0",
     "istanbul": "^0.4.5",
     "slack-node": "^0.1.8"
