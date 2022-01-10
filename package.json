@@ -1,6 +1,6 @@
 {
   "name": "istanbul-slack-notify",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "Sends istanbul / jest coverage summary and git build details to Slack using a pass/fail threshold for project coverage.",
   "main": "./bin/notify.js",
   "scripts": {
