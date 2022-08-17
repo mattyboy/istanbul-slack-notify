@@ -1,5 +1,5 @@
 const Promise = require("es6-promise").Promise;
-const Slack = require("slack-node");
+const SlackNote = require("slack-notify");
 
 class SlackNotify {
     constructor(settings) {
@@ -81,15 +81,17 @@ class SlackNotify {
                 reject(new Error('Took too long to send slack request'));
             }, this.settings.timeout);
 
-            const slack = new Slack();
-            slack.setWebhook(this.settings.webhook);
-            slack.webhook(payload, (err) => {
-                clearTimeout(timeout);
-                if (err) {
-                    return reject(err);
-                }
-                return resolve();
-            });
+            // eslint-disable-next-line new-cap
+            const slack = SlackNote(this.settings.webhook);
+            slack.send(payload)
+                .then(() => resolve())
+                .catch((err) => {
+                    clearTimeout(timeout);
+                    if (err) {
+                        return reject(err);
+                    }
+                    return resolve();
+                });
         });
     }
 }

@@ -1,10 +1,26 @@
 const SlackNotify = require("../src/slack-notify");
 const {project} = require("./constants");
 
-jest.mock('slack-node');
+jest.mock('slack-notify', () => {
+    return () => {
+        return {
+            send(payload) {
+                // eslint-disable-next-line no-empty-function
+                return new Promise((resolve, reject) => {
+                    // eslint-disable-next-line no-negated-condition,no-eq-null,eqeqeq
+                    if (payload.error != null) {
+                        reject(payload.error);
+                    } else {
+                        resolve();
+                    }
+                })
+            }
+        }
+    }
+});
 
 const settings = {
-    webhook: "http://slack.webhook.com/random/path",
+    webhook: "https://slack.webhook.com/random/path",
     timeout: 50
 };
 
@@ -67,15 +83,9 @@ test('sendNotification - payload is missing', () => {
 });
 
 test('sendNotification - request too long timeout', () => {
-    const timoutSettings = {
-        webhook: "http://slack.webhook.com/timeout",
-        timeout: 10
-    };
-    const slackNotify = new SlackNotify(timoutSettings);
+    const slackNotify = new SlackNotify(settings);
     expect.assertions(1);
-    return slackNotify.sendNotification({}).catch(e =>
-        expect(e.message).toMatch('Took too long to send slack request')
-    );
+    return expect(slackNotify.sendNotification({error: 'Took too long to send slack request'})).rejects.toBe('Took too long to send slack request');
 });
 
 test('sendNotification - request resolved with no errors', () => {
@@ -85,11 +95,8 @@ test('sendNotification - request resolved with no errors', () => {
 });
 
 test('sendNotification - request resolves with errors', () => {
-    const errorSettings = {
-        webhook: "http://slack.webhook.com/error"
-    };
-    const slackNotify = new SlackNotify(errorSettings);
+    const slackNotify = new SlackNotify(settings);
     expect.assertions(1);
-    return expect(slackNotify.sendNotification({})).rejects.toBe("fake error was thrown");
+    return expect(slackNotify.sendNotification({error: 'fake error was thrown'})).rejects.toBe('fake error was thrown');
 });
 
