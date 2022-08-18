@@ -87,10 +87,7 @@ class SlackNotify {
                 .then(() => resolve())
                 .catch((err) => {
                     clearTimeout(timeout);
-                    if (err) {
-                        return reject(err);
-                    }
-                    return resolve();
+                    reject(err);
                 });
         });
     }

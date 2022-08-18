@@ -2,26 +2,27 @@ const SlackNotify = require("../src/slack-notify");
 const {project} = require("./constants");
 
 jest.mock('slack-notify', () => {
-    return () => {
-        return {
-            send(payload) {
-                // eslint-disable-next-line no-empty-function
-                return new Promise((resolve, reject) => {
-                    // eslint-disable-next-line no-negated-condition,no-eq-null,eqeqeq
-                    if (payload.error != null) {
-                        reject(payload.error);
-                    } else {
-                        resolve();
-                    }
-                })
-            }
-        }
-    }
+    return jest.fn()
+        .mockImplementation(() => {
+            return {
+                send: (payload) => {
+                    return new Promise((resolve, reject) => {
+                        if (payload.error) {
+                            reject(payload.error);
+                        } else if(payload.timeout) {
+                            // do not resolve or reject anything (triggers timeout)
+                        } else {
+                            resolve();
+                        }
+                    })
+                }
+            };
+        });
 });
 
 const settings = {
     webhook: "https://slack.webhook.com/random/path",
-    timeout: 50
+    timeout: 10
 };
 
 test('constructor missing webhook url', () => {
@@ -33,7 +34,7 @@ test('constructor missing webhook url', () => {
 test('constructor', () => {
     const slackNotify = new SlackNotify(settings);
     expect(slackNotify.settings.webhook).toBe(settings.webhook);
-    expect(slackNotify.settings.timeout).toBe(50);
+    expect(slackNotify.settings.timeout).toBe(10);
     expect(slackNotify.settings.result.fail.color).toBe("#dc5547");
     expect(slackNotify.settings.result.fail.text).toBe("failed");
     expect(slackNotify.settings.result.pass.color).toBe("#36a64f");
@@ -85,7 +86,9 @@ test('sendNotification - payload is missing', () => {
 test('sendNotification - request too long timeout', () => {
     const slackNotify = new SlackNotify(settings);
     expect.assertions(1);
-    return expect(slackNotify.sendNotification({error: 'Took too long to send slack request'})).rejects.toBe('Took too long to send slack request');
+    return slackNotify.sendNotification({timeout: true}).catch(e => {
+        expect(e.message).toMatch('Took too long to send slack request')
+    });
 });
 
 test('sendNotification - request resolved with no errors', () => {
