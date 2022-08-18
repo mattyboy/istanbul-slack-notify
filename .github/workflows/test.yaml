@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [6, 8, 10, 12, 14]
+        node: [10, 12, 14]
         os: [osx-laptop]
 
     steps:
@@ -28,9 +28,6 @@ jobs:
 
       - name: Run Link and Tests
         run: npm run test
-
-      - name: Run Coveralls
-        run: npm run coveralls
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
