@@ -1,6 +1,6 @@
 {
   "name": "istanbul-slack-notify",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Sends nyc (aka: istanbul) coverage summary and git build details to Slack using a pass/fail threshold for project coverage.",
   "main": "./bin/notify.js",
   "type": "module",
