@@ -1,18 +1,16 @@
 #!/usr/bin/env node
-const ProcessResponder = require("../src/process-responder");
-const IstanbulReport = require("../src/istanbul-report");
-const SlackNotify = require("../src/slack-notify");
-const TextNotify = require("../src/text-notify");
-const CommitInfo = require("../src/commit-info");
-const fs = require("fs");
+import ProcessResponder from "../src/process-responder.js";
+import CoverageNotifier from "../src/coverage-notifier.js";
+import TextNotify from "../src/text-notify.js";
+import CommitInfo from "../src/commit-info.js";
+import NycReport from "../src/nyc-report.js";
+import fs from "fs";
 
 // Runs Coverage Notifier
 const settings = {
     useTextNotify: !process.env.SLACK_WEBHOOK,
     istanbul: {
-        rootDir: process.env.PWD,
-        coverageFiles: ["coverage/coverage-final.json"],
-        summaryFile: "coverage/coverage-summary.json",
+        coveragePath: "./coverage",
         threshold: 100
     },
     slack: {
@@ -27,7 +25,7 @@ const settings = {
 // Overwrite settings from package.json if defined
 const packageJson = JSON.parse(fs.readFileSync("./package.json"));
 if (packageJson.coverage) {
-    settings.istanbul.coverageFiles = packageJson.coverage.coverageFiles || settings.istanbul.coverageFiles;
+    settings.istanbul.coveragePath = packageJson.coverage.coveragePath || settings.istanbul.coveragePath;
     settings.istanbul.threshold = packageJson.coverage.threshold || settings.istanbul.threshold;
     settings.slack.channel = packageJson.coverage.channel || settings.slack.channel;
     settings.slack.username = packageJson.coverage.username || settings.slack.username;
@@ -38,7 +36,7 @@ if (packageJson.coverage) {
         : settings.haltOnFailure;
 }
 
-const reports = new IstanbulReport(settings.istanbul);
+const reports = new NycReport(settings.istanbul);
 
 const handleResults = () => {
     let coverage = reports.processSummary();
@@ -54,7 +52,7 @@ const handleResults = () => {
                     textNotify.printCoverage(settings.project);
                     resolve(settings);
                 } else {
-                    const slack = new SlackNotify(settings.slack);
+                    const slack = new CoverageNotifier(settings.slack);
                     slack.buildCoveragePayload(settings.project)
                         .then(data => {
                             slack.sendNotification(data);

@@ -25,7 +25,8 @@
     "slack",
     "jest",
     "coverage",
-    "istanbul"
+    "istanbul",
+    "nyc"
   ],
   "author": "Matt Weston",
   "license": "MIT",
